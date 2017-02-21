@@ -1,0 +1,15 @@
+在R105里的机器无法直接安装jupyter，但它们可以安装github
+首先在同步github
+运行azure，azure是在线应用
+上传相关的notebook即csv文件
+在azure授权csv的步骤中可以拷贝代码，这样运行csv就像是在本地一样
+azure没有那么多module,可以这样解决
+import pip
+try:
+    import folium
+except:
+    package='folium'
+    pip.main(['install','--user',package])
+    raise ImportError('Restarting')
+    
+上面的代码会安装folium
