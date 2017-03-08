@@ -36,9 +36,9 @@ class PropertyspiderSpider(scrapy.Spider):
         next_tags=response.xpath('//a[@title="View the next page of results"]/@href')
         if next_tags:
             next_link=urllib.parse.urljoin('http://www.realestate.com.au',next_tags[0].extract())
-            #yield Request(next_link,callback=self.parse,headers=self.header,dont_filter=True)
+            yield Request(next_link,callback=self.parse,headers=self.header,dont_filter=True)
            
-        property_tags=response.xpath('//article[contains(@class,"resultBody")]')
+        property_tags=response.xpath('//article[contains(@class,"resultBody") and @id and @data-featured-status]')
         if property_tags:
             for each_property in property_tags:
                 price_tag=each_property.xpath('div[@class="listingInfo rui-clearfix"]/div[@class="propertyStats"]/p[@class="priceText" or @class="contactAgent"]/text()')
@@ -86,21 +86,33 @@ class PropertyspiderSpider(scrapy.Spider):
                     bed=bed_tag.extract()[0]
                 else:
                     bed_tag=each_property.xpath('aside/div[@class="listingInfo rui-clearfix"]/dl/dd[1]/text()')
-                    bed=bed_tag.extract()[0]
+                    if bed_tag:
+                        bed=bed_tag.extract()[0]
+                    else:
+                        bed='n/a'
                 
                 car_tag=each_property.xpath('div[@class="listingInfo rui-clearfix"]/dl/dd[2]/text()')
                 if car_tag:
                     car=car_tag.extract()[0]
                 else:
                     car_tag=each_property.xpath('aside/div[@class="listingInfo rui-clearfix"]/dl/dd[2]/text()')
-                    car=car_tag.extract()[0]
+                    if car_tag:
+                        car=car_tag.extract()[0]
+                    else:
+                        car='n/a'
+                    
                     
                 bath_tag=each_property.xpath('div[@class="listingInfo rui-clearfix"]/dl/dd[3]/text()')
                 if bath_tag:
                     bath=bath_tag.extract()[0]
                 else:
                     bath_tag=each_property.xpath('aside/div[@class="listingInfo rui-clearfix"]/dl/dd[3]/text()')
-                    bath=bath_tag.extract()[0]
+                    if bath_tag:
+                        bath=bath_tag.extract()[0]
+                    else:
+                        bath='n/a'
+                    
                 
                 self.writer.writerow((price,type_property,address,link_address,bed,bath,car,response.url))
+                #print(price,type_property,address,link_address,bed,bath,car)
                 
