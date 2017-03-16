@@ -9,8 +9,39 @@ from scrapy import Request
 class PropertyspiderSpider(scrapy.Spider):
     name = "propertySpider"
     allowed_domains = ["realestate.com.au/"]
+    urls=(
+        'https://www.realestate.com.au/sold/in-2601%3b/list-1',
+        'https://www.realestate.com.au/sold/in-2602%3b/list-1',
+        'https://www.realestate.com.au/sold/in-2603%3b/list-1',
+        'https://www.realestate.com.au/sold/in-2604%3b/list-1',
+        'https://www.realestate.com.au/sold/in-2605%3b/list-1',
+        'https://www.realestate.com.au/sold/in-2606%3b/list-1',
+        'https://www.realestate.com.au/sold/in-2607%3b/list-1',
+        'https://www.realestate.com.au/sold/in-2609%3b/list-1',
+        'https://www.realestate.com.au/sold/in-2610%3b/list-1',
+        'https://www.realestate.com.au/sold/in-2611%3b/list-1',
+        'https://www.realestate.com.au/sold/in-2612%3b/list-1',
+        'https://www.realestate.com.au/sold/in-2613%3b/list-1',
+        'https://www.realestate.com.au/sold/in-2614%3b/list-1',
+        'https://www.realestate.com.au/sold/in-2615%3b/list-1',
+        'https://www.realestate.com.au/sold/in-2900%3b/list-1',
+        'https://www.realestate.com.au/sold/in-2901%3b/list-1',
+        'https://www.realestate.com.au/sold/in-2902%3b/list-1',
+        'https://www.realestate.com.au/sold/in-2903%3b/list-1',
+        'https://www.realestate.com.au/sold/in-2904%3b/list-1',
+        'https://www.realestate.com.au/sold/in-2905%3b/list-1',
+        'https://www.realestate.com.au/sold/in-2906%3b/list-1',
+        'https://www.realestate.com.au/sold/in-2907%3b/list-1',
+        'https://www.realestate.com.au/sold/in-2909%3b/list-1',
+        'https://www.realestate.com.au/sold/in-2910%3b/list-1',
+        'https://www.realestate.com.au/sold/in-2911%3b/list-1',
+        'https://www.realestate.com.au/sold/in-2912%3b/list-1',
+        'https://www.realestate.com.au/sold/in-2913%3b/list-1',
+        'https://www.realestate.com.au/sold/in-2914%3b/list-1',
+        'https://www.realestate.com.au/sold/in-2915%3b/list-1')
     start_urls = (
-        'http://www.realestate.com.au/buy/in-canberra+-+greater+region%2c+act%3b/list-1',
+        'https://www.realestate.com.au/sold/in-2600%3b/list-1',
+        
     )
     def __init__(self, *a, **kw):
         super(PropertyspiderSpider, self).__init__(*a, **kw)
@@ -33,86 +64,69 @@ class PropertyspiderSpider(scrapy.Spider):
             self.fp.close()
     
     def parse(self, response):
-        next_tags=response.xpath('//a[@title="View the next page of results"]/@href')
+        next_tags=response.xpath('//a[@title="Go to Next Page"]/@href')
         if next_tags:
             next_link=urllib.parse.urljoin('http://www.realestate.com.au',next_tags[0].extract())
             yield Request(next_link,callback=self.parse,headers=self.header,dont_filter=True)
            
-        property_tags=response.xpath('//article[contains(@class,"resultBody") and @id and @data-featured-status]')
+        property_tags=response.xpath('//article[contains(@class,"results-card property-card")]')
         if property_tags:
             for each_property in property_tags:
-                price_tag=each_property.xpath('div[@class="listingInfo rui-clearfix"]/div[@class="propertyStats"]/p[@class="priceText" or @class="contactAgent"]/text()')
+                price_tag=each_property.xpath('div[contains(@class,"wrapper")]/div[contains(@class,"property-card__content")]/div[contains(@class,"price")]/span/text()')
                 if price_tag:
                     price=price_tag.extract()[0]
                 else:
-                    price_tag=each_property.xpath('aside/div[@class="listingInfo rui-clearfix"]/div[@class="propertyStats"]/p[@class="priceText" or @class="contactAgent"]/text()')
-                    if price_tag:
-                        price=price_tag.extract()[0]
-                    else:
-                        price='n/a'
+                    price='n/a'
                     
-                type_tag=each_property.xpath('div[@class="listingInfo rui-clearfix"]/div[@class="propertyStats"]/p[@class="type"]/text()')
-                if type_tag:
-                    type_property=type_tag.extract()[0]
-                else:
-                    type_tag=each_property.xpath('aside/div[@class="listingInfo rui-clearfix"]/div[@class="propertyStats"]/p[@class=""]/text()')
-                    if type_tag:
-                        type_property=type_tag.extract()[0]
-                    else:
-                        type_property='n/a'
-                    
-                address_tag=each_property.xpath('div[@class="listingInfo rui-clearfix"]/div[@class="vcard"]/h2/a/text()')
-                link_tag=each_property.xpath('div[@class="listingInfo rui-clearfix"]/div[@class="vcard"]/h2/a/@href')
+                address_tag=each_property.xpath('div[contains(@class,"wrapper")]/div[@class="property-card__content"]/div[@class="property-card__info"]/a[@class="property-card__info-text"]/span[1]/text()')
                 if address_tag:
                     address=address_tag.extract()[0]
                 else:
-                    address_tag=each_property.xpath('aside/div[@class="listingInfo rui-clearfix"]/div[@class="vcard"]/h2/a/text()')
-                    if address_tag:
-                        address=address_tag.extract()[0]
-                    else:
-                        address='n/a'
-                        
-                if link_tag:
-                    link_address=urllib.parse.urljoin('http://www.realestate.com.au',link_tag.extract()[0])
+                    address='n/a'
+                    
+                suburb_tag=each_property.xpath('div[contains(@class,"wrapper")]/div[@class="property-card__content"]/div[@class="property-card__info"]/a[@class="property-card__info-text"]/span[2]/text()')
+                if suburb_tag:
+                    suburb=suburb_tag.extract()[0]
                 else:
-                    link_tag=each_property.xpath('aside/div[@class="listingInfo rui-clearfix"]/div[@class="vcard"]/h2/a/@href')
-                    if link_tag:
-                        link_address=urllib.parse.urljoin('http://www.realestate.com.au',link_tag.extract()[0])
-                    else:
-                        link_address='n/a'
-                        
-                bed_tag=each_property.xpath('div[@class="listingInfo rui-clearfix"]/dl/dd[1]/text()')
+                    suburb='n/a'
+                    
+                property_type_tag=each_property.xpath('div[contains(@class,"wrapper")]/div[@class="property-card__content"]/div[@class="property-card__info"]/p/span[1]/text()')
+                if property_type_tag:
+                    property_type=property_type_tag.extract()[0]
+                else:
+                    property_type='n/a'
+                    
+                sold_date_tag=each_property.xpath('div[contains(@class,"wrapper")]/div[@class="property-card__content"]/div[@class="property-card__info"]/p/span[2]/child::node()')
+                if sold_date_tag:
+                    sold_date=sold_date_tag.extract()[-2]
+                else:
+                    sold_date='n/a'
+                    
+                bed_tag=each_property.xpath('div[contains(@class,"wrapper")]/div[@class="property-card__content"]/div[@class="property-card__general-features"]/ul/li[1]/span/child::node()')
                 if bed_tag:
-                    bed=bed_tag.extract()[0]
+                    bed=bed_tag.extract()[-2]
                 else:
-                    bed_tag=each_property.xpath('aside/div[@class="listingInfo rui-clearfix"]/dl/dd[1]/text()')
-                    if bed_tag:
-                        bed=bed_tag.extract()[0]
-                    else:
-                        bed='n/a'
-                
-                car_tag=each_property.xpath('div[@class="listingInfo rui-clearfix"]/dl/dd[2]/text()')
-                if car_tag:
-                    car=car_tag.extract()[0]
-                else:
-                    car_tag=each_property.xpath('aside/div[@class="listingInfo rui-clearfix"]/dl/dd[2]/text()')
-                    if car_tag:
-                        car=car_tag.extract()[0]
-                    else:
-                        car='n/a'
+                    bed='n/a'
                     
-                    
-                bath_tag=each_property.xpath('div[@class="listingInfo rui-clearfix"]/dl/dd[3]/text()')
+                bath_tag=each_property.xpath('div[contains(@class,"wrapper")]/div[@class="property-card__content"]/div[@class="property-card__general-features"]/ul/li[2]/span/child::node()')
                 if bath_tag:
-                    bath=bath_tag.extract()[0]
+                    bath=bath_tag.extract()[-2]
                 else:
-                    bath_tag=each_property.xpath('aside/div[@class="listingInfo rui-clearfix"]/dl/dd[3]/text()')
-                    if bath_tag:
-                        bath=bath_tag.extract()[0]
-                    else:
-                        bath='n/a'
+                    bath='n/a'
                     
-                
-                self.writer.writerow((price,type_property,address,link_address,bed,bath,car,response.url))
-                #print(price,type_property,address,link_address,bed,bath,car)
+                car_tag=each_property.xpath('div[contains(@class,"wrapper")]/div[@class="property-card__content"]/div[@class="property-card__general-features"]/ul/li[3]/span/child::node()')
+                if car_tag:
+                    car=car_tag.extract()[-2]
+                else:
+                    car='n/a'
+                    
+                link_tag=each_property.xpath('a[@class="property-card__link"]/@href')
+                if link_tag:
+                    link=link_tag.extract()[0]
+                    link=urllib.parse.urljoin('http://www.realestate.com.au',link)
+                else:
+                    link='n/a'
+                refer=response.url
+                self.writer.writerow((price,address,suburb,property_type,sold_date,bed,bath,car,link,refer))
+                #print(price,address,suburb,sold_date,property_type,bed,bath,car,link)
                 
