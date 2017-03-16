@@ -5,6 +5,8 @@ import csv
 from scrapy.xlib.pydispatch import dispatcher
 from scrapy import signals
 from scrapy import Request
+import re
+import base64
 
 class PropertyspiderSpider(scrapy.Spider):
     name = "propertySpider"
@@ -76,45 +78,52 @@ class PropertyspiderSpider(scrapy.Spider):
                 if price_tag:
                     price=price_tag.extract()[0]
                 else:
-                    price='n/a'
-                    
-                address_tag=each_property.xpath('div[contains(@class,"wrapper")]/div[@class="property-card__content"]/div[@class="property-card__info"]/a[@class="property-card__info-text"]/span[1]/text()')
+                    price_tag=each_property.xpath('div[contains(@class,"wrapper")]/div[contains(@class,"property-card__content")]/div[contains(@class,"price")]/span/img/@src')
+                    if price_tag:
+                        price=price_tag.extract()[0]
+                        pattern=re.compile(r'(?:convert\/)(.*)(?:\?font-family)')
+                        price=pattern.search(price).groups()[0]
+                        price=base64.b64decode(price)
+                    else:
+                        price='n/a'
+                        
+                address_tag=each_property.xpath('div[contains(@class,"wrapper")]/div[contains(@class,"property-card__content")]/div[contains(@class,"property-card__info")]/a[@class="property-card__info-text"]/span[1]/text()')
                 if address_tag:
                     address=address_tag.extract()[0]
                 else:
                     address='n/a'
                     
-                suburb_tag=each_property.xpath('div[contains(@class,"wrapper")]/div[@class="property-card__content"]/div[@class="property-card__info"]/a[@class="property-card__info-text"]/span[2]/text()')
+                suburb_tag=each_property.xpath('div[contains(@class,"wrapper")]/div[contains(@class,"property-card__content")]/div[contains(@class,"property-card__info")]/a[@class="property-card__info-text"]/span[2]/text()')
                 if suburb_tag:
                     suburb=suburb_tag.extract()[0]
                 else:
                     suburb='n/a'
                     
-                property_type_tag=each_property.xpath('div[contains(@class,"wrapper")]/div[@class="property-card__content"]/div[@class="property-card__info"]/p/span[1]/text()')
+                property_type_tag=each_property.xpath('div[contains(@class,"wrapper")]/div[contains(@class,"property-card__content")]/div[contains(@class,"property-card__info")]/p/span[1]/text()')
                 if property_type_tag:
                     property_type=property_type_tag.extract()[0]
                 else:
                     property_type='n/a'
                     
-                sold_date_tag=each_property.xpath('div[contains(@class,"wrapper")]/div[@class="property-card__content"]/div[@class="property-card__info"]/p/span[2]/child::node()')
+                sold_date_tag=each_property.xpath('div[contains(@class,"wrapper")]/div[contains(@class,"property-card__content")]/div[contains(@class,"property-card__info")]/p/span[2]/child::node()')
                 if sold_date_tag:
                     sold_date=sold_date_tag.extract()[-2]
                 else:
                     sold_date='n/a'
                     
-                bed_tag=each_property.xpath('div[contains(@class,"wrapper")]/div[@class="property-card__content"]/div[@class="property-card__general-features"]/ul/li[1]/span/child::node()')
+                bed_tag=each_property.xpath('div[contains(@class,"wrapper")]/div[contains(@class,"property-card__content")]/div[contains(@class,"property-card__general-features")]/ul/li[1]/span/child::node()')
                 if bed_tag:
                     bed=bed_tag.extract()[-2]
                 else:
                     bed='n/a'
                     
-                bath_tag=each_property.xpath('div[contains(@class,"wrapper")]/div[@class="property-card__content"]/div[@class="property-card__general-features"]/ul/li[2]/span/child::node()')
+                bath_tag=each_property.xpath('div[contains(@class,"wrapper")]/div[contains(@class,"property-card__content")]/div[contains(@class,"property-card__general-features")]/ul/li[2]/span/child::node()')
                 if bath_tag:
                     bath=bath_tag.extract()[-2]
                 else:
                     bath='n/a'
                     
-                car_tag=each_property.xpath('div[contains(@class,"wrapper")]/div[@class="property-card__content"]/div[@class="property-card__general-features"]/ul/li[3]/span/child::node()')
+                car_tag=each_property.xpath('div[contains(@class,"wrapper")]/div[contains(@class,"property-card__content")]/div[contains(@class,"property-card__general-features")]/ul/li[3]/span/child::node()')
                 if car_tag:
                     car=car_tag.extract()[-2]
                 else:
