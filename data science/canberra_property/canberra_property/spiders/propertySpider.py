@@ -43,7 +43,35 @@ class PropertyspiderSpider(scrapy.Spider):
         'https://www.realestate.com.au/sold/in-2915%3b/list-1')
     start_urls = (
         'https://www.realestate.com.au/sold/in-2600%3b/list-1',
-        
+        'https://www.realestate.com.au/sold/in-2601%3b/list-1',
+        'https://www.realestate.com.au/sold/in-2602%3b/list-1',
+        'https://www.realestate.com.au/sold/in-2603%3b/list-1',
+        'https://www.realestate.com.au/sold/in-2604%3b/list-1',
+        'https://www.realestate.com.au/sold/in-2605%3b/list-1',
+        'https://www.realestate.com.au/sold/in-2606%3b/list-1',
+        'https://www.realestate.com.au/sold/in-2607%3b/list-1',
+        'https://www.realestate.com.au/sold/in-2609%3b/list-1',
+        'https://www.realestate.com.au/sold/in-2610%3b/list-1',
+        'https://www.realestate.com.au/sold/in-2611%3b/list-1',
+        'https://www.realestate.com.au/sold/in-2612%3b/list-1',
+        'https://www.realestate.com.au/sold/in-2613%3b/list-1',
+        'https://www.realestate.com.au/sold/in-2614%3b/list-1',
+        'https://www.realestate.com.au/sold/in-2615%3b/list-1',
+        'https://www.realestate.com.au/sold/in-2900%3b/list-1',
+        'https://www.realestate.com.au/sold/in-2901%3b/list-1',
+        'https://www.realestate.com.au/sold/in-2902%3b/list-1',
+        'https://www.realestate.com.au/sold/in-2903%3b/list-1',
+        'https://www.realestate.com.au/sold/in-2904%3b/list-1',
+        'https://www.realestate.com.au/sold/in-2905%3b/list-1',
+        'https://www.realestate.com.au/sold/in-2906%3b/list-1',
+        'https://www.realestate.com.au/sold/in-2907%3b/list-1',
+        'https://www.realestate.com.au/sold/in-2909%3b/list-1',
+        'https://www.realestate.com.au/sold/in-2910%3b/list-1',
+        'https://www.realestate.com.au/sold/in-2911%3b/list-1',
+        'https://www.realestate.com.au/sold/in-2912%3b/list-1',
+        'https://www.realestate.com.au/sold/in-2913%3b/list-1',
+        'https://www.realestate.com.au/sold/in-2914%3b/list-1',
+        'https://www.realestate.com.au/sold/in-2915%3b/list-1'
     )
     def __init__(self, *a, **kw):
         super(PropertyspiderSpider, self).__init__(*a, **kw)
